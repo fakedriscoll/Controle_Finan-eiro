@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b32">
+  <meta name="description" content="Organize receitas, despesas, parcelas e orçamentos em um só lugar.">
+  <title>Meu Saldo — Controle financeiro</title>
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <main class="auth-screen" id="authScreen">
+    <div class="auth-layout">
+      <aside class="auth-hero">
+        <a class="brand auth-brand" href="#inicio" aria-label="Meu Saldo, início"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 3.5 31 11v14L18 32.5 5 25V11L18 3.5Z"/><path d="M11 22.5V14l7-4 7 4v8.5l-7 4-7-4Z"/><path d="M18 10v17M11 14l14 8.5M25 14l-14 8.5"/></svg></span><span class="brand-name">meu<span>saldo</span></span></a>
+        <div class="auth-hero-copy"><div class="auth-hero-badge"><span aria-hidden="true">●</span> CONTA SEGURA NA NUVEM</div><h2>Um jeito mais claro de cuidar do seu dinheiro.</h2><p>Crie sua conta para salvar suas informações financeiras na nuvem.</p></div>
+        <div class="auth-hero-bottom"><span class="auth-orbit" aria-hidden="true">↗</span><p><strong>Seu dinheiro, no seu ritmo.</strong><br>Receitas, despesas e parcelas em um só lugar.</p></div>
+      </aside>
+
+      <section class="auth-card" aria-labelledby="authTitle">
+        <div class="demo-warning" role="note"><span class="demo-warning-icon" aria-hidden="true">!</span><p><strong>Conta conectada ao Firebase.</strong> Seus dados de acesso são protegidos pelo Firebase Authentication.</p></div>
+        <div class="auth-heading"><div class="eyebrow">ACESSO DE DEMONSTRAÇÃO</div><h1 id="authTitle">Crie seu acesso de demonstração</h1><p id="authSubtitle">Sua conta será usada para salvar e recuperar seus dados.</p></div>
+        <div class="auth-mode-switch" role="tablist" aria-label="Escolher tela de demonstração"><button class="auth-mode active" id="registerMode" type="button" role="tab" aria-selected="true" aria-controls="registerFields">Criar conta</button><button class="auth-mode" id="loginMode" type="button" role="tab" aria-selected="false" aria-controls="loginFields">Entrar</button></div>
+        <div class="auth-fields" id="registerFields" role="tabpanel" aria-labelledby="registerMode">
+          <label class="auth-field auth-field-wide" for="demoFullName"><span>Nome completo</span><input id="demoFullName" type="text" placeholder="Ex.: Marina Silva" autocomplete="off" spellcheck="false"></label>
+          <label class="auth-field" for="demoEmail"><span>E-mail</span><input id="demoEmail" type="email" placeholder="voce@exemplo.com" autocomplete="off" spellcheck="false"></label>
+          <label class="auth-field" for="demoPassword"><span>Senha</span><input id="demoPassword" type="password" placeholder="Mínimo de 6 caracteres" autocomplete="new-password"></label>
+          <label class="auth-field auth-field-wide" for="demoCpf"><span>CPF</span><input id="demoCpf" type="text" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" autocomplete="off" spellcheck="false"></label>
+        </div>
+        <div class="auth-fields" id="loginFields" role="tabpanel" aria-labelledby="loginMode" hidden>
+          <label class="auth-field auth-field-wide" for="demoLoginEmail"><span>E-mail</span><input id="demoLoginEmail" type="email" placeholder="voce@exemplo.com" autocomplete="off" spellcheck="false"></label>
+          <label class="auth-field auth-field-wide" for="demoLoginPassword"><span>Senha</span><input id="demoLoginPassword" type="password" placeholder="Mínimo de 6 caracteres" autocomplete="off"></label>
+        </div>
+        <button class="button button-primary auth-open-button" id="demoOpenApp" type="button">Abrir painel de demonstração <span aria-hidden="true">→</span></button>
+        <p class="auth-disclaimer">Sua sessão é autenticada pelo Firebase.</p>
+      </section>
+    </div>
+    <footer class="auth-footer"><span>Meu Saldo · Dados na nuvem</span><span>Seus dados são armazenados na sua conta Firebase.</span></footer>
+  </main>
+
+  <div class="app-shell" id="appShell" hidden>
+    <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+      <a class="brand" href="#inicio" aria-label="Meu Saldo, início">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 3.5 31 11v14L18 32.5 5 25V11L18 3.5Z"/><path d="M11 22.5V14l7-4 7 4v8.5l-7 4-7-4Z"/><path d="M18 10v17M11 14l14 8.5M25 14l-14 8.5"/></svg></span>
+        <span class="brand-name">meu<span>saldo</span></span>
+      </a>
+
+      <div class="side-caption">SEU ESPAÇO</div>
+      <nav class="main-nav">
+        <button class="nav-link active" data-view="dashboard" type="button"><span class="nav-icon" aria-hidden="true">⌂</span> Visão geral</button>
+        <button class="nav-link" data-view="transactions" type="button"><span class="nav-icon" aria-hidden="true">↔</span> Movimentações</button>
+        <button class="nav-link" data-view="installments" type="button"><span class="nav-icon" aria-hidden="true">▤</span> Parcelamentos <span class="nav-count" id="installmentNavCount">0</span></button>
+        <button class="nav-link" data-view="budgets" type="button"><span class="nav-icon" aria-hidden="true">◷</span> Orçamentos</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip">
+          <span class="tip-spark" aria-hidden="true">✳</span>
+          <p>Um passo de cada vez.<br><strong>Seu dinheiro, no seu ritmo.</strong></p>
+        </div>
+        <div class="local-status"><span class="status-dot"></span><span>Seus dados ficam na nuvem</span></div>
+        <button class="nav-link data-link" id="exportButton" type="button"><span class="nav-icon" aria-hidden="true">↓</span> Exportar dados</button>
+        <button class="nav-link data-link danger-link" id="clearButton" type="button"><span class="nav-icon" aria-hidden="true">⌫</span> Apagar meus dados</button>
+        <div class="profile"><div class="avatar">MS</div><div><strong>Meu espaço</strong><small>Controle pessoal</small></div><span class="profile-menu" aria-hidden="true">···</span></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Abrir navegação" aria-expanded="false" type="button"><span></span><span></span><span></span></button>
+        <div class="breadcrumbs"><span>Meu espaço</span><span class="crumb-slash">/</span><strong id="breadcrumbCurrent">Visão geral</strong></div>
+        <div class="topbar-actions">
+          <label class="month-picker-label" for="monthPicker"><span class="calendar-icon" aria-hidden="true">▦</span><span class="sr-only">Selecionar mês</span><input id="monthPicker" type="month"></label>
+          <button class="button button-soft reminder-trigger" id="reminderButton" type="button" title="Ativar lembretes de vencimentos e orçamentos"><span aria-hidden="true">♧</span><span class="reminder-label">Lembretes</span></button>
+          <button class="button button-primary add-transaction-top" id="addExpenseButton" type="button"><span aria-hidden="true">＋</span> Nova movimentação</button>
+        </div>
+      </header>
+
+      <div class="content-wrap">
+        <div class="demo-app-notice" role="note"><span class="demo-status-dot" aria-hidden="true"></span><p><strong>Conta conectada</strong> · Seus dados financeiros são salvos na sua conta Firebase.</p><button class="demo-back-button" id="demoBackButton" type="button">Sair da conta</button></div>
+        <section class="page-view" id="dashboardView" aria-labelledby="pageTitle">
+          <div class="page-heading">
+            <div><div class="eyebrow" id="todayLabel">SEU RESUMO</div><h1 id="pageTitle">Seu dinheiro, em equilíbrio.</h1><p class="page-subtitle">Um retrato simples do que entra e sai.</p></div>
+            <div class="heading-actions"><button class="button button-outline" id="addIncomeButton" type="button"><span class="income-plus">＋</span> Adicionar receita</button></div>
+          </div>
+
+          <div class="summary-grid">
+            <article class="summary-card balance-card">
+              <div class="summary-top"><span>Saldo previsto</span><span class="summary-icon balance-icon" aria-hidden="true">↗</span></div>
+              <div class="summary-value" id="balanceValue">R$ 0,00</div>
+              <div class="summary-foot"><span class="balance-line"></span><span id="balanceCaption">Receitas menos despesas do período</span></div>
+            </article>
+            <article class="summary-card">
+              <div class="summary-top"><span>Receitas</span><span class="summary-icon income-icon" aria-hidden="true">↓</span></div>
+              <div class="summary-value" id="incomeValue">R$ 0,00</div>
+              <div class="summary-foot"><span class="trend-pill positive" id="incomeCount">0 registros</span><span>no período</span></div>
+            </article>
+            <article class="summary-card">
+              <div class="summary-top"><span>Despesas</span><span class="summary-icon expense-icon" aria-hidden="true">↑</span></div>
+              <div class="summary-value" id="expenseValue">R$ 0,00</div>
+              <div class="summary-foot"><span class="trend-pill neutral" id="expenseCount">0 registros</span><span>no período</span></div>
+            </article>
+            <article class="summary-card">
+              <div class="summary-top"><span>Em aberto</span><span class="summary-icon pending-icon" aria-hidden="true">◷</span></div>
+              <div class="summary-value" id="pendingValue">R$ 0,00</div>
+              <div class="summary-foot"><span id="pendingCount">0 contas pendentes</span><span>no período</span></div>
+            </article>
+          </div>
+
+          <section class="invoice-panel" aria-labelledby="invoicePanelTitle">
+            <div class="invoice-panel-heading"><span class="invoice-card-icon" aria-hidden="true">▤</span><div><div class="eyebrow">PLANEJAMENTO DO CARTÃO</div><h2 id="invoicePanelTitle">Fatura prevista</h2><p id="invoicePeriod">Mês selecionado</p></div></div>
+            <div class="invoice-flow">
+              <div class="invoice-step"><span>Saldo previsto antes</span><strong id="invoiceBefore">R$ 0,00</strong></div>
+              <span class="invoice-operator" aria-hidden="true">−</span>
+              <div class="invoice-step"><span>Fatura estimada</span><strong id="invoiceTotal">R$ 0,00</strong><small id="invoiceCount">0 lançamentos</small></div>
+              <span class="invoice-operator" aria-hidden="true">=</span>
+              <div class="invoice-step invoice-result"><span>Saldo se pagar a fatura</span><strong id="invoiceAfter">R$ 0,00</strong></div>
+            </div>
+            <p class="invoice-note" id="invoiceNote">A estimativa considera as despesas no crédito e parcelas lançadas para o mês selecionado.</p>
+          </section>
+
+          <section class="alerts-panel" id="alertsPanel" aria-live="polite" hidden>
+            <div class="alerts-heading"><span class="alert-symbol" aria-hidden="true">!</span><div><h2>Um olhar nos próximos dias</h2><p>Veja o que merece sua atenção.</p></div><span class="alert-total" id="alertTotal">0</span></div>
+            <div class="alert-list" id="alertList"></div>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel spending-panel">
+              <div class="panel-heading"><div><div class="eyebrow">PARA ONDE VAI</div><h2>Despesas por categoria</h2></div><span class="period-chip" id="categoryPeriod"></span></div>
+              <div class="category-chart-wrap"><div class="donut" id="categoryDonut" role="img" aria-label="Gráfico de despesas por categoria"><div class="donut-center"><strong id="donutTotal">R$ 0</strong><span>no mês</span></div></div><div class="chart-legend" id="categoryLegend"></div></div>
+              <div class="empty-chart" id="categoryEmpty" hidden>Suas categorias aparecem aqui quando você adicionar despesas.</div>
+            </section>
+            <section class="panel trend-panel">
+              <div class="panel-heading"><div><div class="eyebrow">SEU RITMO</div><h2>Entradas e saídas</h2></div><span class="legend-inline"><i class="legend-dot income-dot"></i> Receitas <i class="legend-dot expense-dot"></i> Despesas</span></div>
+              <div class="trend-chart" id="trendChart" aria-label="Comparação mensal entre receitas e despesas"></div>
+            </section>
+          </div>
+
+          <div class="dashboard-grid lower-grid">
+            <section class="panel recent-panel">
+              <div class="panel-heading"><div><div class="eyebrow">MOVIMENTAÇÕES</div><h2>Recentes</h2></div><button class="text-button" data-goto="transactions" type="button">Ver todas <span aria-hidden="true">→</span></button></div>
+              <div id="recentTransactions"></div>
+            </section>
+            <section class="panel budget-preview-panel">
+              <div class="panel-heading"><div><div class="eyebrow">PLANEJAMENTO</div><h2>Seus orçamentos</h2></div><button class="text-button" data-goto="budgets" type="button">Ver todos <span aria-hidden="true">→</span></button></div>
+              <div id="budgetPreview"></div>
+            </section>
+          </div>
+          <div class="privacy-note"><span class="privacy-lock" aria-hidden="true">◈</span> Seus registros são salvos na nuvem. <button id="privacyExport" type="button">Baixar uma cópia</button><button id="privacyClear" type="button">Apagar dados</button></div>
+        </section>
+
+        <section class="page-view" id="transactionsView" hidden aria-labelledby="transactionsTitle">
+          <div class="page-heading"><div><div class="eyebrow">SEU HISTÓRICO</div><h1 id="transactionsTitle">Movimentações</h1><p class="page-subtitle">Receitas e despesas organizadas no seu ritmo.</p></div><div class="heading-actions"><button class="button button-outline" id="viewAddIncome" type="button"><span class="income-plus">＋</span> Receita</button><button class="button button-primary" id="viewAddExpense" type="button"><span>＋</span> Despesa</button></div></div>
+          <section class="panel transactions-panel">
+            <div class="filters-row">
+              <label class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Buscar descrição..." autocomplete="off"></label>
+              <label class="select-field"><span class="sr-only">Tipo</span><select id="typeFilter"><option value="all">Todos os tipos</option><option value="income">Receitas</option><option value="expense">Despesas</option></select></label>
+              <label class="select-field"><span class="sr-only">Categoria</span><select id="categoryFilter"><option value="all">Todas as categorias</option></select></label>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Movimentação</th><th>Categoria</th><th>Data</th><th>Status</th><th class="align-right">Valor</th><th><span class="sr-only">Ações</span></th></tr></thead><tbody id="transactionsTable"></tbody></table></div>
+            <div id="transactionEmpty" class="empty-state" hidden><span class="empty-illustration" aria-hidden="true">↗</span><h3>Nenhuma movimentação por aqui</h3><p>Adicione uma receita ou despesa para começar seu controle.</p><button class="button button-primary" id="emptyAddButton" type="button">Adicionar movimentação</button></div>
+            <div id="filterEmpty" class="empty-state compact-empty" hidden><h3>Nenhum resultado</h3><p>Tente ajustar os filtros ou a busca.</p></div>
+          </section>
+        </section>
+
+        <section class="page-view" id="installmentsView" hidden aria-labelledby="installmentsTitle">
+          <div class="page-heading"><div><div class="eyebrow">COMPRAS PARCELADAS</div><h1 id="installmentsTitle">Parcelamentos</h1><p class="page-subtitle">Veja cada compra e o valor que cai em cada mês.</p></div><div class="heading-actions"><button class="button button-primary" id="addInstallmentButton" type="button"><span>＋</span> Nova compra parcelada</button></div></div>
+          <div class="installment-summary" id="installmentSummary"></div>
+          <section class="installment-sheet-panel panel" id="installmentSheetSection" hidden aria-labelledby="installmentSheetTitle">
+            <div class="sheet-heading"><div><div class="eyebrow">AGENDA POR MÊS</div><h2 id="installmentSheetTitle">Planilha de parcelas</h2><p>Cada linha é uma compra; cada coluna mostra os vencimentos daquele mês. A tabela acompanha os parcelamentos cadastrados.</p></div><div class="sheet-window-controls"><button class="sheet-step" id="installmentGridPrev" type="button" aria-label="Mostrar seis meses anteriores" title="Seis meses anteriores">‹</button><span class="sheet-window-range" id="installmentGridRange"></span><button class="sheet-step" id="installmentGridNext" type="button" aria-label="Mostrar os seis meses seguintes" title="Seis meses seguintes">›</button><button class="sheet-reset" id="installmentGridReset" type="button" hidden>Mês selecionado</button></div></div>
+            <p class="sheet-hint">A janela começa no mês selecionado no topo. Deslize a planilha na horizontal para ver todos os meses.</p>
+            <div class="installment-sheet-scroll" tabindex="0" role="region" aria-label="Planilha mensal de compras parceladas; use as setas para navegar pelos meses">
+              <table class="installment-sheet"><thead id="installmentSheetHead"></thead><tbody id="installmentSheetBody"></tbody><tfoot id="installmentSheetFoot"></tfoot></table>
+            </div>
+            <p class="sheet-note">Cada célula mostra valor, número da parcela e situação. O total do mês inclui parcelas pagas e em aberto; o valor em aberto aparece logo abaixo.</p>
+          </section>
+          <div class="installment-details-heading" id="installmentDetailsHeading"><div><h2>Detalhes das compras</h2><p>Atualize o pagamento ou remova um parcelamento por aqui.</p></div></div>
+          <div class="installment-list" id="installmentList"></div>
+          <div id="installmentEmpty" class="empty-state panel" hidden><span class="empty-illustration" aria-hidden="true">▤</span><h3>Sem parcelamentos registrados</h3><p>Quando dividir uma compra, adicione-a aqui para acompanhar cada vencimento.</p><button class="button button-primary" id="emptyInstallmentButton" type="button">Adicionar parcelamento</button></div>
+        </section>
+
+        <section class="page-view" id="budgetsView" hidden aria-labelledby="budgetsTitle">
+          <div class="page-heading"><div><div class="eyebrow">PLANEJAMENTO DO MÊS</div><h1 id="budgetsTitle">Orçamentos</h1><p class="page-subtitle">Defina limites por categoria e acompanhe seu progresso.</p></div><div class="heading-actions"><button class="button button-primary" id="addBudgetButton" type="button"><span>＋</span> Definir orçamento</button></div></div>
+          <div class="budget-overview" id="budgetOverview"></div>
+          <div class="budget-grid" id="budgetGrid"></div>
+          <div id="budgetEmpty" class="empty-state panel" hidden><span class="empty-illustration" aria-hidden="true">◷</span><h3>Seu plano começa com um limite</h3><p>Escolha uma categoria e defina quanto quer gastar neste mês.</p><button class="button button-primary" id="emptyBudgetButton" type="button">Definir primeiro orçamento</button></div>
+        </section>
+      </div>
+      <footer class="site-footer"><span>Feito para trazer clareza, não cobrança.</span><span>Meu Saldo <span aria-hidden="true">·</span> Seus dados permanecem seus</span></footer>
+    </main>
+  </div>
+
+  <dialog class="modal" id="transactionDialog" aria-labelledby="transactionDialogTitle">
+    <form id="transactionForm" method="dialog" novalidate>
+      <div class="modal-heading"><div><div class="eyebrow">MOVIMENTAÇÃO</div><h2 id="transactionDialogTitle">Adicionar despesa</h2><p>Registre os detalhes para manter tudo em ordem.</p></div><button class="icon-button modal-close" type="button" data-close="transactionDialog" aria-label="Fechar">×</button></div>
+      <input id="transactionId" type="hidden">
+      <div class="segmented-control" role="group" aria-label="Tipo da movimentação"><button class="segment active" type="button" data-transaction-type="expense">Despesa</button><button class="segment" type="button" data-transaction-type="income">Receita</button></div>
+      <div class="form-grid">
+        <label class="form-field span-2"><span>Descrição</span><input id="transactionDescription" type="text" maxlength="80" placeholder="Ex.: mercado da semana" required></label>
+        <label class="form-field"><span>Valor (R$)</span><input id="transactionAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required></label>
+        <label class="form-field"><span id="transactionDateLabel">Data</span><input id="transactionDate" type="date" required></label>
+        <label class="form-field"><span>Categoria</span><select id="transactionCategory" required></select></label>
+        <label class="form-field" id="paymentField"><span>Forma de pagamento</span><select id="transactionPayment"><option>Pix</option><option>Cartão de crédito</option><option>Cartão de débito</option><option>Dinheiro</option><option>Boleto</option><option>Transferência</option><option>Outro</option></select></label>
+        <label class="form-field span-2"><span id="statusLabel">Situação</span><select id="transactionStatus"><option value="paid">Pago</option><option value="pending">Pendente</option></select></label>
+      </div>
+      <div class="installment-shortcut" id="installmentShortcut" hidden><div><strong>Essa compra foi parcelada?</strong><span>Cadastre as parcelas e os vencimentos da fatura.</span></div><button class="button button-outline" id="openInstallmentFromExpense" type="button">Adicionar parcelas</button></div>
+      <p class="form-error" id="transactionError" role="alert" hidden></p>
+      <div class="modal-actions"><button class="button button-ghost" type="button" data-close="transactionDialog">Cancelar</button><button class="button button-primary" type="submit">Salvar movimentação</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="installmentDialog" aria-labelledby="installmentDialogTitle">
+    <form id="installmentForm" method="dialog" novalidate>
+      <div class="modal-heading"><div><div class="eyebrow">COMPRA PARCELADA</div><h2 id="installmentDialogTitle">Adicionar parcelamento</h2><p>Vamos distribuir as parcelas a partir do primeiro vencimento.</p></div><button class="icon-button modal-close" type="button" data-close="installmentDialog" aria-label="Fechar">×</button></div>
+      <div class="form-grid">
+        <label class="form-field span-2"><span>O que você comprou?</span><input id="installmentDescription" type="text" maxlength="80" placeholder="Ex.: notebook" required></label>
+        <label class="form-field"><span>Valor total (R$)</span><input id="installmentAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required></label>
+        <label class="form-field"><span>Número de parcelas</span><input id="installmentCount" type="number" min="2" max="60" step="1" value="6" required></label>
+        <label class="form-field"><span>Primeiro vencimento</span><input id="installmentDate" type="date" required></label>
+        <label class="form-field"><span>Parcelas já pagas</span><input id="installmentPaid" type="number" min="0" max="60" step="1" value="0" required></label>
+        <label class="form-field"><span>Categoria</span><select id="installmentCategory" required></select></label>
+        <label class="form-field"><span>Forma de pagamento</span><select id="installmentPayment"><option>Cartão de crédito</option><option>Pix</option><option>Cartão de débito</option><option>Boleto</option><option>Outro</option></select></label>
+      </div>
+      <div class="installment-preview" id="installmentPreview">Informe o total e a quantidade para ver o valor de cada parcela.</div>
+      <p class="form-error" id="installmentError" role="alert" hidden></p>
+      <div class="modal-actions"><button class="button button-ghost" type="button" data-close="installmentDialog">Cancelar</button><button class="button button-primary" type="submit">Criar parcelamento</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal small-modal" id="budgetDialog" aria-labelledby="budgetDialogTitle">
+    <form id="budgetForm" method="dialog" novalidate>
+      <div class="modal-heading"><div><div class="eyebrow">ORÇAMENTO DO MÊS</div><h2 id="budgetDialogTitle">Definir limite</h2><p id="budgetMonthLabel"></p></div><button class="icon-button modal-close" type="button" data-close="budgetDialog" aria-label="Fechar">×</button></div>
+      <input id="budgetId" type="hidden">
+      <label class="form-field"><span>Categoria</span><select id="budgetCategory" required></select></label>
+      <label class="form-field"><span>Limite mensal (R$)</span><input id="budgetLimit" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required></label>
+      <p class="form-error" id="budgetError" role="alert" hidden></p>
+      <div class="modal-actions"><button class="button button-ghost" type="button" data-close="budgetDialog">Cancelar</button><button class="button button-primary" type="submit">Salvar orçamento</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal confirm-modal" id="confirmationDialog" aria-labelledby="confirmationTitle" aria-describedby="confirmationMessage">
+    <div class="confirm-content"><span class="confirm-symbol" aria-hidden="true">!</span><div><div class="eyebrow">CONFIRMAÇÃO</div><h2 id="confirmationTitle">Confirmar exclusão</h2><p id="confirmationMessage">Deseja excluir este item?</p></div></div>
+    <div class="modal-actions"><button class="button button-ghost" id="confirmationCancel" type="button">Cancelar</button><button class="button button-danger" id="confirmationAccept" type="button">Excluir</button></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
